@@ -12,7 +12,7 @@
         <label for="password">Password</label>
         <input type="password" class="form-control" id="password" placeholder="Enter password">
     </div>
-    <button type="button" class="btn btn-primary my-2 d-block">Secure login</button>
+    <button type="button" onclick="SecureLogin()" class="btn btn-primary my-2 d-block">Secure login</button>
     <button type="button" onclick="SqlInjection()" class="btn btn-danger my-2 d-block">Sql Injection</button>
     <button type="button" class="btn btn-danger my-2 d-block">Brute-force</button>
     <button type="button" class="btn btn-success my-2 d-block">Login with camera</button>
@@ -33,7 +33,24 @@
                 alert("Successful login");
             },
             error: (err) => {
-                console.log(err);
+                alert("Your username or passowrd is not valid.");
+            }
+        });
+    }
+
+    function SecureLogin() {
+        $.ajax({
+            url: "/Login/SecureLogin",
+            method: "POST",
+            data: JSON.stringify({
+                "Username": $("#username").val(),
+                "Password": $("#password").val()
+            }),
+            contentType: "application/json",
+            success: (response) => {
+                alert("Successful login");
+            },
+            error: (err) => {
                 alert("Your username or passowrd is not valid.");
             }
         });
