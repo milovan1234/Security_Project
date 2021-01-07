@@ -37,5 +37,32 @@ namespace SecurityProject.Controllers
             }
             return BadRequest();
         }
+
+        [HttpPost]
+        public IActionResult DictionaryAttack([FromBody] User user)
+        {
+            SqlConnection connection = new SqlConnection(@"Server=DESKTOP-OVA2KPB\SQLEXPRESS;Database=SECURITY_DATABASE;Trusted_Connection=True;");
+            try
+            {
+                connection.Open();
+                SqlCommand sqlCommand = new SqlCommand("SELECT COUNT(*) FROM Users where Username='" + user.Username + "' AND Password='" + user.Password + "'", connection);
+                int login = (int)sqlCommand.ExecuteScalar();
+                if (login == 0)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok();
+                }
+            }
+            catch
+            { }
+            finally
+            {
+                connection.Close();
+            }
+            return BadRequest();
+        }
     }
 }

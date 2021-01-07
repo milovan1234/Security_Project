@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30309.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityProject", "SecurityProject\SecurityProject.csproj", "{C7E82646-A384-4568-B39A-AE4C15DC7694}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecurityProject", "SecurityProject\SecurityProject.csproj", "{C7E82646-A384-4568-B39A-AE4C15DC7694}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictionaryAttack", "DictionaryAttack\DictionaryAttack.csproj", "{C4B83F96-C9A9-499D-AA67-11EDDAE68082}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{C7E82646-A384-4568-B39A-AE4C15DC7694}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7E82646-A384-4568-B39A-AE4C15DC7694}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7E82646-A384-4568-B39A-AE4C15DC7694}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4B83F96-C9A9-499D-AA67-11EDDAE68082}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4B83F96-C9A9-499D-AA67-11EDDAE68082}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4B83F96-C9A9-499D-AA67-11EDDAE68082}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4B83F96-C9A9-499D-AA67-11EDDAE68082}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
