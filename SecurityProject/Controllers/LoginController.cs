@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using Microsoft.AspNetCore.Mvc;
+using SecurityProject.Helpers;
 using SecurityProject.Models;
 
 namespace SecurityProject.Controllers
@@ -13,7 +14,7 @@ namespace SecurityProject.Controllers
         private const string CONNECTION_STRING_MILOVAN = @"Server=(localdb)\MSSQLLocalDB;Database=SECURITY_DATABASE;Trusted_Connection=True;";
         private const string CONNECTION_STRING_BOJAN = @"Server=DESKTOP-OVA2KPB\SQLEXPRESS;Database=SECURITY_DATABASE;Trusted_Connection=True;";
 
-        private SqlConnection connection = new SqlConnection(CONNECTION_STRING_BOJAN);
+        private SqlConnection connection = new SqlConnection(CONNECTION_STRING_MILOVAN);
        
         public IActionResult Index()
         {            
@@ -60,6 +61,7 @@ namespace SecurityProject.Controllers
             }
         }
 
+        [ServiceFilter(typeof(ClientIpCheckActionFilter))]
         [HttpPost]
         public IActionResult SecureLogin([FromBody] User user)
         {
@@ -144,7 +146,7 @@ namespace SecurityProject.Controllers
                     return true;
                 }
             }
-            catch(Exception ex)
+            catch
             { }
             finally
             {
