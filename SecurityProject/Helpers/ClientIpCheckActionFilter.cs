@@ -16,7 +16,6 @@ namespace SecurityProject.Helpers
         private const int MAX_NUMBER_OF_REQUEST = 1;
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            CheckBlockedIpAddresses();
             string remoteIpAddress = context.HttpContext.Connection.RemoteIpAddress.ToString();
             RequestDetails requestDetails = requests.FirstOrDefault(x => x.Key.Equals(remoteIpAddress)).Value;
             if(requestDetails == null)
@@ -30,8 +29,9 @@ namespace SecurityProject.Helpers
                 requests.Add(remoteIpAddress, requestDetails);
             }
             else
-            {                
-                if (requestDetails.isBlocked)
+            {
+                CheckBlockedIpAddress(remoteIpAddress);
+                if(requestDetails.isBlocked)
                 {
                     context.Result = new StatusCodeResult(StatusCodes.Status403Forbidden);
                     return;
@@ -47,15 +47,13 @@ namespace SecurityProject.Helpers
             base.OnActionExecuting(context);
         }
 
-        private void CheckBlockedIpAddresses()
+        private void CheckBlockedIpAddress(string key)
         {
-            foreach (var key in requests.Keys)
+            RequestDetails requestDetails = requests[key];
+            if (requestDetails.isBlocked)
             {
-                if (requests[key].isBlocked)
-                {
-                    requests[key].isBlocked = ((DateTime.Now - requests[key].LastRequest) < MINUTES_FOR_BLOCKED);
-                    requests[key].NumberOfRequests = requests[key].isBlocked ? requests[key].NumberOfRequests : 0;
-                }
+                requestDetails.isBlocked = ((DateTime.Now - requestDetails.LastRequest) < MINUTES_FOR_BLOCKED);
+                requestDetails.NumberOfRequests = requestDetails.isBlocked ? requestDetails.NumberOfRequests : 0;
             }
         }
     }
