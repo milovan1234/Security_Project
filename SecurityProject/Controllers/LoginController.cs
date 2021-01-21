@@ -14,7 +14,7 @@ namespace SecurityProject.Controllers
         private const string CONNECTION_STRING_MILOVAN = @"Server=(localdb)\MSSQLLocalDB;Database=SECURITY_DATABASE;Trusted_Connection=True;";
         private const string CONNECTION_STRING_BOJAN = @"Server=DESKTOP-OVA2KPB\SQLEXPRESS;Database=SECURITY_DATABASE;Trusted_Connection=True;";
 
-        private SqlConnection connection = new SqlConnection(CONNECTION_STRING_MILOVAN);
+        private SqlConnection connection = new SqlConnection(CONNECTION_STRING_BOJAN);
        
         public IActionResult Index()
         {            
@@ -95,8 +95,9 @@ namespace SecurityProject.Controllers
                     command = new SqlCommand("UPDATE USERS set NumberOfInvalidLogin = NumberOfInvalidLogin + 1 where Username = @username",connection);
                     command.Parameters.AddWithValue("@username", user.Username);
                     command.ExecuteNonQuery();
-                    command = new SqlCommand("UPDATE USERS set LastInvalidLogin = @datetime",connection);
+                    command = new SqlCommand("UPDATE USERS set LastInvalidLogin = @datetime where Username = @username", connection);
                     command.Parameters.AddWithValue("@datetime", DateTime.Now);
+                    command.Parameters.AddWithValue("@username", user.Username);
                     command.ExecuteNonQuery();
                     return false;
                 }
