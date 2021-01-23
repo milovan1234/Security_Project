@@ -13,7 +13,7 @@ namespace SecurityProject.Helpers
         public static Dictionary<string, RequestDetails> requests = new Dictionary<string, RequestDetails>();
         private TimeSpan SECONDS_BETWEEN_REQUESTS = TimeSpan.FromSeconds(120);
         private TimeSpan MINUTES_FOR_BLOCKED = TimeSpan.FromMinutes(1);
-        private const int MAX_NUMBER_OF_REQUEST = 1;
+        private const int MAX_NUMBER_OF_REQUEST = 20;
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             string remoteIpAddress = context.HttpContext.Connection.RemoteIpAddress.ToString();

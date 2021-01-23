@@ -49,7 +49,16 @@
                 alert("Successful login");
             },
             error: (err) => {
-                alert("Your username or passowrd is not valid.");
+                if (err.status == 403) {
+                    if (err.responseText) {
+                        alert(err.responseText);
+                    } else {
+                        alert("Your IP address is blocked.");
+                    }
+                    
+                } else {
+                    alert("Your username or passowrd is not valid.");
+                }                
             }
         });
     }

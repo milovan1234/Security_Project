@@ -14,7 +14,7 @@ namespace SecurityProject.Controllers
         private const string CONNECTION_STRING_MILOVAN = @"Server=(localdb)\MSSQLLocalDB;Database=SECURITY_DATABASE;Trusted_Connection=True;";
         private const string CONNECTION_STRING_BOJAN = @"Server=DESKTOP-OVA2KPB\SQLEXPRESS;Database=SECURITY_DATABASE;Trusted_Connection=True;";
 
-        private SqlConnection connection = new SqlConnection(CONNECTION_STRING_BOJAN);
+        private SqlConnection connection = new SqlConnection(CONNECTION_STRING_MILOVAN);
        
         public IActionResult Index()
         {            
@@ -50,7 +50,7 @@ namespace SecurityProject.Controllers
         [HttpPost]
         public IActionResult DictionaryAttack([FromBody] User user)
         {
-            bool isUserFound = SafeSqlCheck(user);
+            bool isUserFound = SqlCheck(user);
             if (isUserFound)
             {
                 return Ok();
@@ -65,10 +65,11 @@ namespace SecurityProject.Controllers
         [HttpPost]
         public IActionResult SecureLogin([FromBody] User user)
         {
-            bool isLoginNumberOK = CheckNumberOfFaultLogin(user);
+            int timeToWait = 0;
+            bool isLoginNumberOK = CheckNumberOfFaultLogin(user, ref timeToWait);
             if (!isLoginNumberOK) 
             {
-                return BadRequest();
+                return StatusCode(403, "You cannot log in for " + timeToWait + " seconds.");
             }
             bool isUserFound = SafeSqlCheck(user);
             if (isUserFound)
@@ -77,7 +78,7 @@ namespace SecurityProject.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Your data are invalid.");
             }
         }
 
@@ -117,7 +118,33 @@ namespace SecurityProject.Controllers
             }
             return false;
         }
-        private bool CheckNumberOfFaultLogin(User user)
+        private bool SqlCheck(User user)
+        {
+            try
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM Users WHERE Username=@username AND Password=@password", connection);
+                command.Parameters.AddWithValue("@username", user.Username);
+                command.Parameters.AddWithValue("@password", user.Password);
+                int login = (int)command.ExecuteScalar();
+                if (login == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            catch
+            { }
+            finally
+            {
+                connection.Close();
+            }
+            return false;
+        }
+        private bool CheckNumberOfFaultLogin(User user, ref int timeToWait)
         {
             try
             {
@@ -129,7 +156,9 @@ namespace SecurityProject.Controllers
                 {
                     command = new SqlCommand("SELECT LastInvalidLogin FROM Users WHERE Username=@username",connection);
                     command.Parameters.AddWithValue("@username", user.Username);
+                    
                     DateTime banTime = (DateTime)command.ExecuteScalar();
+                    timeToWait = (int)(TIME_TO_WAIT_BETWEEN_FAULT_LOGIN - (DateTime.Now - banTime)).TotalSeconds;
                     if(DateTime.Now - banTime > TIME_TO_WAIT_BETWEEN_FAULT_LOGIN) 
                     {
                         command = new SqlCommand("UPDATE USERS set NumberOfInvalidLogin = 0 WHERE Username=@username",connection);
@@ -153,7 +182,7 @@ namespace SecurityProject.Controllers
             {
                 connection.Close();
             }
-            return false;
+            return true;
         }
     }
 }

